@@ -37,11 +37,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cobalt-Money/cobalt-ts.git"
+    "url": "git+https://github.com/Cobalt-Money/Cobalt-Typescript-SDK.git"
   },
-  "homepage": "https://github.com/Cobalt-Money/cobalt-ts",
+  "homepage": "https://github.com/Cobalt-Money/Cobalt-Typescript-SDK",
   "bugs": {
-    "url": "https://github.com/Cobalt-Money/cobalt-ts/issues"
+    "url": "https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/issues"
   },
   "keywords": [
     "cobalt",
