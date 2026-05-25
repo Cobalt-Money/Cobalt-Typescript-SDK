@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.3...sdk-v0.2.4) (2026-05-25)
+
+
+### Documentation
+
+* https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry ([2a60086](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/2a60086804a21ca2811635cd85b812b063821c7c))
+
 ## [0.2.3](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.2...sdk-v0.2.3) (2026-05-25)
 
 
