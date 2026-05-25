@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AccountsGetData, AccountsGetErrors, AccountsGetResponses, AccountsListData, AccountsListErrors, AccountsListResponses, ActivitiesListData, ActivitiesListErrors, ActivitiesListResponses, BalancesSnapshotsData, BalancesSnapshotsErrors, BalancesSnapshotsResponses, CategoriesListData, CategoriesListErrors, CategoriesListResponses, PortfolioSnapshotsData, PortfolioSnapshotsErrors, PortfolioSnapshotsResponses, PositionsListData, PositionsListErrors, PositionsListResponses, RecurringListData, RecurringListErrors, RecurringListResponses, SpendingGetData, SpendingGetErrors, SpendingGetResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsGetData, TagsGetErrors, TagsGetResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses, TransactionsCreateData, TransactionsCreateErrors, TransactionsCreateResponses, TransactionsGetData, TransactionsGetErrors, TransactionsGetResponses, TransactionsListData, TransactionsListErrors, TransactionsListResponses, TransactionsUpdateTagsData, TransactionsUpdateTagsErrors, TransactionsUpdateTagsResponses } from './types.gen';
+import type { AccountsCreateData, AccountsCreateErrors, AccountsCreateResponses, AccountsDeleteData, AccountsDeleteErrors, AccountsDeleteResponses, AccountsGetData, AccountsGetErrors, AccountsGetResponses, AccountsListData, AccountsListErrors, AccountsListResponses, ActivitiesListData, ActivitiesListErrors, ActivitiesListResponses, BalancesSnapshotsData, BalancesSnapshotsErrors, BalancesSnapshotsResponses, CategoriesCreateData, CategoriesCreateErrors, CategoriesCreateResponses, CategoriesDeleteData, CategoriesDeleteErrors, CategoriesDeleteResponses, CategoriesListData, CategoriesListErrors, CategoriesListResponses, CategoriesUpdateData, CategoriesUpdateErrors, CategoriesUpdateResponses, PortfolioSnapshotsData, PortfolioSnapshotsErrors, PortfolioSnapshotsResponses, PositionsListData, PositionsListErrors, PositionsListResponses, RecurringListData, RecurringListErrors, RecurringListResponses, SpendingGetData, SpendingGetErrors, SpendingGetResponses, TagsBulkApplyData, TagsBulkApplyErrors, TagsBulkApplyResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsGetData, TagsGetErrors, TagsGetResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses, TransactionsCreateData, TransactionsCreateErrors, TransactionsCreateResponses, TransactionsGetData, TransactionsGetErrors, TransactionsGetResponses, TransactionsListData, TransactionsListErrors, TransactionsListResponses, TransactionsUpdateData, TransactionsUpdateErrors, TransactionsUpdateResponses, TransactionsUpdateTagsData, TransactionsUpdateTagsErrors, TransactionsUpdateTagsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -33,6 +33,46 @@ export class accounts {
                 }
             ],
             url: '/accounts',
+            ...options
+        });
+    }
+    
+    /**
+     * Create manual account
+     *
+     * Create a manual (non-bank-linked) account — checking, savings, credit, brokerage, or loan — and seed today's balance snapshot. `subtype` must belong to the chosen `type` vocabulary (see schema). `creditLimit` only valid when `type === "credit"`.
+     */
+    public static create<ThrowOnError extends boolean = false>(options: Options<AccountsCreateData, ThrowOnError>) {
+        return (options.client ?? client).post<AccountsCreateResponses, AccountsCreateErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/accounts',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Delete account
+     *
+     * Delete an account. Manual accounts are removed outright; Plaid-linked accounts are unlinked and — when no accounts remain under the underlying item — Cobalt also calls Plaid's `/item/remove` to stop billing and webhooks.
+     */
+    public static delete<ThrowOnError extends boolean = false>(options: Options<AccountsDeleteData, ThrowOnError>) {
+        return (options.client ?? client).delete<AccountsDeleteResponses, AccountsDeleteErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/accounts/{id}',
             ...options
         });
     }
@@ -116,6 +156,28 @@ export class transactions {
     }
     
     /**
+     * Update transaction
+     *
+     * Sparse partial update — only fields present in the body are written. Pass `null` to restore the original (provider-derived) value. Returns the updated transaction.
+     */
+    public static update<ThrowOnError extends boolean = false>(options: Options<TransactionsUpdateData, ThrowOnError>) {
+        return (options.client ?? client).patch<TransactionsUpdateResponses, TransactionsUpdateErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/transactions/{transactionId}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
      * Set transaction tags
      *
      * Replace the set of tags on a transaction. Use `GET /v1/tags` to discover available tag ids.
@@ -171,6 +233,28 @@ export class tags {
                 }
             ],
             url: '/tags',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Bulk apply tags
+     *
+     * Add and/or remove tags across many transactions in one call.
+     */
+    public static bulkApply<ThrowOnError extends boolean = false>(options: Options<TagsBulkApplyData, ThrowOnError>) {
+        return (options.client ?? client).post<TagsBulkApplyResponses, TagsBulkApplyErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/tags/bulk-apply',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
@@ -334,6 +418,68 @@ export class categories {
             ],
             url: '/categories',
             ...options
+        });
+    }
+    
+    /**
+     * Create category
+     *
+     * Create a custom category under an existing group.
+     */
+    public static create<ThrowOnError extends boolean = false>(options: Options<CategoriesCreateData, ThrowOnError>) {
+        return (options.client ?? client).post<CategoriesCreateResponses, CategoriesCreateErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/categories',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Delete category
+     *
+     * Soft-delete a custom category. Dependent transactions and recurring rows are reassigned to the user's Uncategorized seed category. System categories cannot be deleted — hide them instead.
+     */
+    public static delete<ThrowOnError extends boolean = false>(options: Options<CategoriesDeleteData, ThrowOnError>) {
+        return (options.client ?? client).delete<CategoriesDeleteResponses, CategoriesDeleteErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/categories/{categoryId}',
+            ...options
+        });
+    }
+    
+    /**
+     * Update category
+     *
+     * Rename, recolor, hide, reorder, or move a category between groups.
+     */
+    public static update<ThrowOnError extends boolean = false>(options: Options<CategoriesUpdateData, ThrowOnError>) {
+        return (options.client ?? client).patch<CategoriesUpdateResponses, CategoriesUpdateErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/categories/{categoryId}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
         });
     }
 }

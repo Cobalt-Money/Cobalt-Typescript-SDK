@@ -24,7 +24,7 @@ export type ErrorResponseWithCode = {
     error: string;
 };
 
-export type AccountDetail = {
+export type AccountCreateResponse = {
     data: Account;
 };
 
@@ -38,6 +38,10 @@ export type ValidationError = {
         name: string;
     };
     success: boolean;
+};
+
+export type AccountDetail = {
+    data: Account;
 };
 
 export type TransactionList = {
@@ -69,6 +73,9 @@ export type Transaction = {
      * Raw description from the institution.
      */
     name: string;
+    /**
+     * Additional details regarding the transaction. Supports Markdown.
+     */
     notes: string | null;
     pending: boolean;
     tagIds: Array<string>;
@@ -87,16 +94,43 @@ export type TransactionCreate = {
      * Positive = money out (spending), negative = money in (refund/income).
      */
     amount: number;
+    /**
+     * Category id from `GET /v1/categories`. Omit to leave uncategorized.
+     */
+    categoryId?: string;
     date: string;
+    location?: TransactionLocation;
     merchantName?: string;
     /**
      * Transaction description.
      */
     name: string;
     /**
-     * Free-form notes.
+     * Additional details regarding the transaction. Supports Markdown.
      */
     notes?: string;
+    /**
+     * Tag ids to attach (from `GET /v1/tags`).
+     */
+    tagIds?: Array<string>;
+    /**
+     * Merchant website. Bare domain or full URL.
+     */
+    website?: string;
+};
+
+/**
+ * Merchant location. When set, `location` is added to lockedFields so future syncs can't overwrite it.
+ */
+export type TransactionLocation = {
+    address: string | null;
+    city: string | null;
+    country: string | null;
+    lat: number | null;
+    lon: number | null;
+    postal_code: string | null;
+    region: string | null;
+    store_number: string | null;
 };
 
 export type TransactionTagsUpdate = {
@@ -142,6 +176,11 @@ export const TagColor = {
 } as const;
 
 export type TagColor = typeof TagColor[keyof typeof TagColor];
+
+export type TagsBulkApplyResponse = {
+    success: boolean;
+    updatedCount: number;
+};
 
 export type PositionList = {
     data: Array<{
@@ -250,6 +289,10 @@ export type CategoryGroup = {
     systemKey: string | null;
 };
 
+export type CategoryDetailResponse = {
+    data: Category;
+};
+
 export type RecurringStreamList = {
     data: Array<RecurringStream>;
 };
@@ -331,6 +374,85 @@ export type AccountsListResponses = {
 };
 
 export type AccountsListResponse = AccountsListResponses[keyof AccountsListResponses];
+
+export type AccountsCreateData = {
+    /**
+     * Account to create
+     */
+    body: {
+        creditLimit?: number;
+        currency?: string;
+        currentBalance: number;
+        logoDomain?: string;
+        name: string;
+        subtype: 'credit card' | 'line of credit' | 'checking' | 'savings' | 'cash' | 'brokerage' | 'ira' | 'roth ira' | '401k' | 'hsa' | 'crypto' | 'mortgage' | 'student' | 'auto' | 'personal';
+        type: 'depository' | 'credit' | 'investment' | 'loan';
+    };
+    path?: never;
+    query?: never;
+    url: '/accounts';
+};
+
+export type AccountsCreateErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type AccountsCreateError = AccountsCreateErrors[keyof AccountsCreateErrors];
+
+export type AccountsCreateResponses = {
+    /**
+     * Created account
+     */
+    201: AccountCreateResponse;
+};
+
+export type AccountsCreateResponse = AccountsCreateResponses[keyof AccountsCreateResponses];
+
+export type AccountsDeleteData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/accounts/{id}';
+};
+
+export type AccountsDeleteErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Account not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * Account cannot be deleted via this endpoint
+     */
+    409: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type AccountsDeleteError = AccountsDeleteErrors[keyof AccountsDeleteErrors];
+
+export type AccountsDeleteResponses = {
+    /**
+     * Account deleted
+     */
+    204: void;
+};
+
+export type AccountsDeleteResponse = AccountsDeleteResponses[keyof AccountsDeleteResponses];
 
 export type AccountsGetData = {
     body?: never;
@@ -479,6 +601,55 @@ export type TransactionsGetResponses = {
 
 export type TransactionsGetResponse = TransactionsGetResponses[keyof TransactionsGetResponses];
 
+export type TransactionsUpdateData = {
+    /**
+     * Fields to update
+     */
+    body: {
+        categoryId?: string | null;
+        date?: string | null;
+        location?: TransactionLocation & ({
+            [key: string]: unknown;
+        } | null);
+        merchantName?: string | null;
+        name?: string | null;
+        notes?: string | null;
+        tags?: Array<string>;
+        website?: string | null;
+    };
+    path: {
+        transactionId: string;
+    };
+    query?: never;
+    url: '/transactions/{transactionId}';
+};
+
+export type TransactionsUpdateErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Transaction, category, or tag not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type TransactionsUpdateError = TransactionsUpdateErrors[keyof TransactionsUpdateErrors];
+
+export type TransactionsUpdateResponses = {
+    /**
+     * Updated transaction
+     */
+    200: TransactionDetail;
+};
+
+export type TransactionsUpdateResponse = TransactionsUpdateResponses[keyof TransactionsUpdateResponses];
+
 export type TransactionsUpdateTagsData = {
     /**
      * Tag ids to attach
@@ -580,6 +751,46 @@ export type TagsCreateResponses = {
 };
 
 export type TagsCreateResponse = TagsCreateResponses[keyof TagsCreateResponses];
+
+export type TagsBulkApplyData = {
+    /**
+     * Transactions + tag add/remove sets
+     */
+    body: {
+        addTagIds?: Array<string>;
+        removeTagIds?: Array<string>;
+        transactionIds: Array<string>;
+    };
+    path?: never;
+    query?: never;
+    url: '/tags/bulk-apply';
+};
+
+export type TagsBulkApplyErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * One or more tags not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type TagsBulkApplyError = TagsBulkApplyErrors[keyof TagsBulkApplyErrors];
+
+export type TagsBulkApplyResponses = {
+    /**
+     * Bulk apply complete
+     */
+    200: TagsBulkApplyResponse;
+};
+
+export type TagsBulkApplyResponse2 = TagsBulkApplyResponses[keyof TagsBulkApplyResponses];
 
 export type TagsDeleteData = {
     body?: never;
@@ -843,6 +1054,135 @@ export type CategoriesListResponses = {
 };
 
 export type CategoriesListResponse = CategoriesListResponses[keyof CategoriesListResponses];
+
+export type CategoriesCreateData = {
+    /**
+     * Category to create
+     */
+    body: {
+        excludeFromInsights?: boolean;
+        groupId: string;
+        iconKey: string;
+        name: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/categories';
+};
+
+export type CategoriesCreateErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Group not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type CategoriesCreateError = CategoriesCreateErrors[keyof CategoriesCreateErrors];
+
+export type CategoriesCreateResponses = {
+    /**
+     * Created category
+     */
+    201: CategoryDetailResponse;
+};
+
+export type CategoriesCreateResponse = CategoriesCreateResponses[keyof CategoriesCreateResponses];
+
+export type CategoriesDeleteData = {
+    body?: never;
+    path: {
+        categoryId: string;
+    };
+    query?: never;
+    url: '/categories/{categoryId}';
+};
+
+export type CategoriesDeleteErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Category not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * System category cannot be deleted
+     */
+    409: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type CategoriesDeleteError = CategoriesDeleteErrors[keyof CategoriesDeleteErrors];
+
+export type CategoriesDeleteResponses = {
+    /**
+     * Category deleted
+     */
+    204: void;
+};
+
+export type CategoriesDeleteResponse = CategoriesDeleteResponses[keyof CategoriesDeleteResponses];
+
+export type CategoriesUpdateData = {
+    /**
+     * Fields to update
+     */
+    body: {
+        excludeFromInsights?: boolean;
+        groupId?: string;
+        hidden?: boolean;
+        iconKey?: string;
+        name?: string;
+        order?: number;
+    };
+    path: {
+        categoryId: string;
+    };
+    query?: never;
+    url: '/categories/{categoryId}';
+};
+
+export type CategoriesUpdateErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+    /**
+     * Category or group not found
+     */
+    404: ErrorResponseWithCode;
+    /**
+     * Operation not permitted on this category
+     */
+    409: ErrorResponseWithCode;
+    /**
+     * Validation failed
+     */
+    422: ValidationError;
+};
+
+export type CategoriesUpdateError = CategoriesUpdateErrors[keyof CategoriesUpdateErrors];
+
+export type CategoriesUpdateResponses = {
+    /**
+     * Updated category
+     */
+    200: CategoryDetailResponse;
+};
+
+export type CategoriesUpdateResponse = CategoriesUpdateResponses[keyof CategoriesUpdateResponses];
 
 export type RecurringListData = {
     body?: never;

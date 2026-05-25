@@ -57,7 +57,7 @@ export const ErrorResponseWithCodeSchema = {
     required: ['code', 'error']
 } as const;
 
-export const AccountDetailSchema = {
+export const AccountCreateResponseSchema = {
     type: 'object',
     properties: {
         data: {
@@ -114,6 +114,16 @@ export const ValidationErrorSchema = {
     required: ['error', 'success']
 } as const;
 
+export const AccountDetailSchema = {
+    type: 'object',
+    properties: {
+        data: {
+            '$ref': '#/components/schemas/Account'
+        }
+    },
+    required: ['data']
+} as const;
+
 export const TransactionListSchema = {
     type: 'object',
     properties: {
@@ -163,7 +173,9 @@ export const TransactionSchema = {
             description: 'Raw description from the institution.'
         },
         notes: {
-            type: ['string', 'null']
+            type: ['string', 'null'],
+            description: 'Additional details regarding the transaction. Supports Markdown.',
+            example: '**Reimbursable** — paid for team lunch, expense via Expensify'
         },
         pending: {
             type: 'boolean'
@@ -193,35 +205,98 @@ export const TransactionCreateSchema = {
     properties: {
         accountId: {
             type: 'string',
-            description: 'Account to attach this transaction to. Must be a manual account.'
+            description: 'Account to attach this transaction to. Must be a manual account.',
+            example: '01HX8N7K5Q3M2P9R4V6Y8Z1A2B'
         },
         amount: {
             type: 'number',
-            description: 'Positive = money out (spending), negative = money in (refund/income).'
+            description: 'Positive = money out (spending), negative = money in (refund/income).',
+            example: 24.5
+        },
+        categoryId: {
+            type: 'string',
+            format: 'uuid',
+            description: 'Category id from `GET /v1/categories`. Omit to leave uncategorized.',
+            example: '8f3b2a1e-4c5d-6e7f-8a9b-0c1d2e3f4a5b'
         },
         date: {
             type: 'string',
             pattern: '^\\d{4}-\\d{2}-\\d{2}$',
             example: '2026-05-22'
         },
+        location: {
+            '$ref': '#/components/schemas/TransactionLocation'
+        },
         merchantName: {
             type: 'string',
             minLength: 1,
-            maxLength: 255
+            maxLength: 255,
+            example: 'Blue Bottle Coffee'
         },
         name: {
             type: 'string',
             minLength: 1,
             maxLength: 255,
-            description: 'Transaction description.'
+            description: 'Transaction description.',
+            example: 'Blue Bottle Coffee — Mission'
         },
         notes: {
             type: 'string',
             maxLength: 2000,
-            description: 'Free-form notes.'
+            description: 'Additional details regarding the transaction. Supports Markdown.',
+            example: '**Reimbursable** — paid for team lunch, expense via Expensify'
+        },
+        tagIds: {
+            type: 'array',
+            items: {
+                type: 'string',
+                format: 'uuid'
+            },
+            description: 'Tag ids to attach (from `GET /v1/tags`).',
+            example: ['a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d']
+        },
+        website: {
+            type: 'string',
+            minLength: 3,
+            maxLength: 2048,
+            pattern: '^[^\\s]+\\.[^\\s]+$',
+            description: 'Merchant website. Bare domain or full URL.',
+            example: 'bluebottlecoffee.com'
         }
     },
     required: ['accountId', 'amount', 'date', 'name']
+} as const;
+
+export const TransactionLocationSchema = {
+    type: 'object',
+    properties: {
+        address: {
+            type: ['string', 'null']
+        },
+        city: {
+            type: ['string', 'null']
+        },
+        country: {
+            type: ['string', 'null']
+        },
+        lat: {
+            type: ['number', 'null']
+        },
+        lon: {
+            type: ['number', 'null']
+        },
+        postal_code: {
+            type: ['string', 'null']
+        },
+        region: {
+            type: ['string', 'null']
+        },
+        store_number: {
+            type: ['string', 'null']
+        }
+    },
+    required: ['address', 'city', 'country', 'lat', 'lon', 'postal_code', 'region', 'store_number'],
+    description: "Merchant location. When set, `location` is added to lockedFields so future syncs can't overwrite it."
 } as const;
 
 export const TransactionTagsUpdateSchema = {
@@ -286,6 +361,19 @@ export const TagDetailSchema = {
 export const TagColorSchema = {
     type: 'string',
     enum: ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'blue', 'indigo', 'violet', 'purple', 'pink', 'rose', 'slate', 'stone']
+} as const;
+
+export const TagsBulkApplyResponseSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        updatedCount: {
+            type: 'integer'
+        }
+    },
+    required: ['success', 'updatedCount']
 } as const;
 
 export const PositionListSchema = {
@@ -535,6 +623,16 @@ export const CategoryGroupSchema = {
         }
     },
     required: ['id', 'name', 'systemKey']
+} as const;
+
+export const CategoryDetailResponseSchema = {
+    type: 'object',
+    properties: {
+        data: {
+            '$ref': '#/components/schemas/Category'
+        }
+    },
+    required: ['data']
 } as const;
 
 export const RecurringStreamListSchema = {
