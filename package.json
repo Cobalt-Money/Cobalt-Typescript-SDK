@@ -1,6 +1,6 @@
 {
   "name": "@cobalt-money/sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Official TypeScript SDK for the Cobalt API",
   "license": "MIT",
   "type": "module",
@@ -43,6 +43,11 @@
   "bugs": {
     "url": "https://github.com/Cobalt-Money/cobalt-ts/issues"
   },
-  "keywords": ["cobalt", "sdk", "api", "typescript"],
+  "keywords": [
+    "cobalt",
+    "sdk",
+    "api",
+    "typescript"
+  ],
   "packageManager": "bun@1.2.0"
 }
