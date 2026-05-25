@@ -25,5 +25,7 @@ jobs:
       - run: bun run generate
       - run: bun run build
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # No NODE_AUTH_TOKEN — auth via npm Trusted Publishing (OIDC).
+        # npm CLI reads the GitHub Actions OIDC token (id-token: write above)
+        # and exchanges it for a short-lived publish token. The package's
+        # Trusted Publisher config on npmjs.com pins this exact workflow.
