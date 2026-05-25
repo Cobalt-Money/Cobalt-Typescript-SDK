@@ -1,0 +1,48 @@
+{
+  "name": "@cobalt-money/sdk",
+  "version": "0.1.0",
+  "description": "Official TypeScript SDK for the Cobalt API",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "fetch-spec": "curl -fsSL ${COBALT_OPENAPI_URL:-http://localhost:3000/v1/openapi.json} -o openapi.json",
+    "generate": "openapi-ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run generate && bun run build"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.13.0"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.85.0",
+    "typescript": "^5.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cobalt-Money/cobalt-ts.git"
+  },
+  "homepage": "https://github.com/Cobalt-Money/cobalt-ts",
+  "bugs": {
+    "url": "https://github.com/Cobalt-Money/cobalt-ts/issues"
+  },
+  "keywords": ["cobalt", "sdk", "api", "typescript"],
+  "packageManager": "bun@1.2.0"
+}

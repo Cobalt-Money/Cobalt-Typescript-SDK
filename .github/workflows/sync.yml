@@ -1,0 +1,35 @@
+name: Sync SDK
+
+on:
+  repository_dispatch:
+    types: [spec-updated]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Fetch latest spec
+        run: curl -fsSL https://api.cobaltpf.com/v1/openapi.json -o openapi.json
+      - name: Install + generate
+        run: |
+          bun install --frozen-lockfile
+          bun run generate
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Open PR if changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "feat: sync SDK with latest API spec"
+          branch: sdk/auto-sync
+          title: "feat: sync SDK with latest API spec"
+          body: "Auto-generated from Cobalt-Web spec change. Conventional Commit type `feat` triggers a minor bump via release-please. Edit to `fix:` for patch."
+          delete-branch: true
