@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.2...sdk-v0.2.3) (2026-05-25)
+
+
+### Bug Fixes
+
+* **package:** repository URL to match renamed repo ([58963f7](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/58963f7e33c115ab719d79633418f4258c38dae2))
+
 ## [0.2.2](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.1...sdk-v0.2.2) (2026-05-25)
 
 
