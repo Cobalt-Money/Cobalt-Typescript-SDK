@@ -19,8 +19,11 @@ jobs:
           bun-version: latest
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Node 22 ships npm 10.x; Trusted Publishing requires npm 11.5+.
+          # Bump npm explicitly below so OIDC flow works.
+          node-version: 22
           registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
       - run: bun run generate
       - run: bun run build
