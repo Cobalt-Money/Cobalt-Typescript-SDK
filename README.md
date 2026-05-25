@@ -12,14 +12,14 @@ bun add @cobalt-money/sdk
 ## Usage
 
 ```ts
-import { AccountsService, client } from "@cobalt-money/sdk";
+import { cobalt } from "@cobalt-money/sdk";
 
-client.setConfig({
+cobalt.setConfig({
   baseUrl: "https://api.cobaltpf.com",
   auth: () => process.env.COBALT_API_KEY!,
 });
 
-const { data, error } = await AccountsService.accountsList();
+const { data, error } = await cobalt.accounts.list();
 if (error) throw error;
 console.log(data);
 ```
