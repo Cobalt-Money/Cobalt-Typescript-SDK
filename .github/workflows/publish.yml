@@ -8,6 +8,8 @@ on:
 permissions:
   contents: read
   id-token: write
+  # packages:write needed for GitHub Packages publish below.
+  packages: write
 
 jobs:
   publish:
@@ -17,6 +19,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      # ─── Build once, publish to both registries ────────────────────────
       - uses: actions/setup-node@v4
         with:
           # Node 22 ships npm 10.x; Trusted Publishing requires npm 11.5+.
@@ -27,7 +31,23 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run generate
       - run: bun run build
-      - run: npm publish --provenance --access public
+
+      # ─── Publish to npmjs.com (Trusted Publishing + provenance) ────────
+      - name: Publish to npmjs.com
+        run: npm publish --provenance --access public
+
+      # ─── Publish to GitHub Packages (mirror) ───────────────────────────
+      # Switches the registry-url; reuses the same tarball contents. Uses
+      # GITHUB_TOKEN (auto-provided) with packages:write granted above.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@cobalt-money"
+      - name: Publish to GitHub Packages
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # No NODE_AUTH_TOKEN — auth via npm Trusted Publishing (OIDC).
         # npm CLI reads the GitHub Actions OIDC token (id-token: write above)
         # and exchanges it for a short-lived publish token. The package's
