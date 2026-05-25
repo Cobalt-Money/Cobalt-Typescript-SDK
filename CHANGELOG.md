@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.1...sdk-v0.2.2) (2026-05-25)
+
+
+### Bug Fixes
+
+* **ci:** upgrade npm to 11.5+ for Trusted Publishing OIDC support ([0e90594](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/0e905944d480e33c58b195426d9875a9b61863db))
+
 ## [0.2.1](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.2.0...sdk-v0.2.1) (2026-05-25)
 
 
