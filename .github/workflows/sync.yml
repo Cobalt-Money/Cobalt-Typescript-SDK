@@ -17,19 +17,83 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Snapshot previous spec
+        # `openapi.json` is committed at repo root from the prior sync. Keep
+        # a copy so we can diff after we overwrite it with the new fetch.
+        run: cp openapi.json /tmp/old-openapi.json
+
       - name: Fetch latest spec
         run: curl -fsSL https://api.cobaltpf.com/v1/openapi.json -o openapi.json
-      - name: Install + generate
+
+      - name: Diff spec with oasdiff
+        id: diff
+        # `oasdiff` (Tufin) is the canonical OpenAPI 3.x diff tool. Produces:
+        #   - changelog (human-readable, includes server URL changes, schema/operation diffs)
+        #   - breaking flag (exit code != 0 when contract-breaking deltas exist)
+        run: |
+          docker run --rm -v "$(pwd):/work" -v "/tmp:/tmp" tufin/oasdiff:latest \
+            changelog /tmp/old-openapi.json /work/openapi.json --format markdown \
+            > /tmp/changelog.md || true
+
+          if docker run --rm -v "$(pwd):/work" -v "/tmp:/tmp" tufin/oasdiff:latest \
+               breaking /tmp/old-openapi.json /work/openapi.json --fail-on ERR > /dev/null 2>&1; then
+            echo "breaking=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "breaking=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          # If the diff is empty (no changes), the SDK regen below will also
+          # be a no-op and peter-evans will skip the PR. Surface "no changes"
+          # in commit message anyway so a manually triggered run is readable.
+          if [ ! -s /tmp/changelog.md ]; then
+            echo "_No spec changes detected._" > /tmp/changelog.md
+          fi
+
+      - name: Install + generate SDK
         run: |
           bun install --frozen-lockfile
           bun run generate
+
       - name: Typecheck
         run: bun run typecheck
+
+      - name: Compose commit message
+        id: msg
+        # Build a Conventional Commit. `feat!:` marks breaking changes for
+        # release-please; the BREAKING CHANGE: footer drives major-version
+        # bumps once we hit 1.0.
+        run: |
+          PREFIX="feat"
+          if [ "${{ steps.diff.outputs.breaking }}" = "true" ]; then
+            PREFIX="feat!"
+          fi
+
+          {
+            echo "${PREFIX}: sync SDK with API spec changes"
+            echo
+            cat /tmp/changelog.md
+            if [ "${{ steps.diff.outputs.breaking }}" = "true" ]; then
+              echo
+              echo "BREAKING CHANGE: contract-breaking changes detected (see changelog above)"
+            fi
+          } > /tmp/commit-body.txt
+
+          {
+            echo "message<<EOF"
+            cat /tmp/commit-body.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Open PR if changed
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: "feat: sync SDK with latest API spec"
+          # PAT (not GITHUB_TOKEN) so the resulting merge commit triggers
+          # release-please. GITHUB_TOKEN-authored pushes do not start new
+          # workflow runs.
+          token: ${{ secrets.SDK_DISPATCH_TOKEN }}
+          commit-message: ${{ steps.msg.outputs.message }}
           branch: sdk/auto-sync
           title: "feat: sync SDK with latest API spec"
-          body: "Auto-generated from Cobalt-Web spec change. Conventional Commit type `feat` triggers a minor bump via release-please. Edit to `fix:` for patch."
+          body-path: /tmp/commit-body.txt
           delete-branch: true
