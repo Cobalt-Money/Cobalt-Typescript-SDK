@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.4.0...sdk-v0.5.0) (2026-05-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* contract-breaking changes detected (see changelog above)
+* contract-breaking changes detected (see changelog above)
+
+### Features
+
+* README rewrite + pagination helpers ([377024e](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/377024e025d196a712da99de1d1a114d730aaa07))
+* README rewrite + pagination helpers (iterate, listAll) ([00c2ce7](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/00c2ce746ecd57d24293de43edea0e77dd7b37d7))
+* sync SDK with API spec changes ([404bf3a](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/404bf3acecb0cf803f1fc4fa7ab21bbda80641f5))
+* sync SDK with API spec changes ([1ac5fd5](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/1ac5fd51e4430cdf9a664f1cdf1d94dc958f89f5))
+* sync SDK with API spec changes ([aefc06b](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/aefc06b8ae0ccfdabdfc397fcd80214c837515af))
+* sync SDK with latest API spec ([6154514](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/6154514f29e8be13edfad755bedc225679fd9e99))
+* sync SDK with latest API spec ([77ab433](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/77ab433c5dcda442f68e80e3d8ac62c1245f2ca2))
+* sync SDK with latest API spec ([da4f1d8](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/commit/da4f1d800567737e129a26cbe16086792b9b9355))
+
 ## [0.4.0](https://github.com/Cobalt-Money/Cobalt-Typescript-SDK/compare/sdk-v0.3.0...sdk-v0.4.0) (2026-05-25)
 
 
