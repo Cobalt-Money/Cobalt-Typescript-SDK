@@ -239,7 +239,9 @@ export type TagsBulkApplyResponse = {
     updatedCount: number;
 };
 
-export type PositionList = Array<{
+export type PositionList = Array<Position>;
+
+export type Position = {
     accountId: string;
     averagePurchasePrice: string | null;
     currencyCode: string | null;
@@ -249,7 +251,7 @@ export type PositionList = Array<{
     symbol: string | null;
     symbolDescription: string | null;
     units: string | null;
-}>;
+};
 
 export type ActivityList = Array<Activity>;
 

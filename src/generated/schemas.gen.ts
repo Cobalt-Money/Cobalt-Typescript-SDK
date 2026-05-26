@@ -497,38 +497,42 @@ export const TagsBulkApplyResponseSchema = {
 export const PositionListSchema = {
     type: 'array',
     items: {
-        type: 'object',
-        properties: {
-            accountId: {
-                type: 'string'
-            },
-            averagePurchasePrice: {
-                type: ['string', 'null']
-            },
-            currencyCode: {
-                type: ['string', 'null']
-            },
-            id: {
-                type: 'string'
-            },
-            openPnl: {
-                type: ['string', 'null']
-            },
-            price: {
-                type: ['string', 'null']
-            },
-            symbol: {
-                type: ['string', 'null']
-            },
-            symbolDescription: {
-                type: ['string', 'null']
-            },
-            units: {
-                type: ['string', 'null']
-            }
-        },
-        required: ['accountId', 'averagePurchasePrice', 'currencyCode', 'id', 'openPnl', 'price', 'symbol', 'symbolDescription', 'units']
+        '$ref': '#/components/schemas/Position'
     }
+} as const;
+
+export const PositionSchema = {
+    type: 'object',
+    properties: {
+        accountId: {
+            type: 'string'
+        },
+        averagePurchasePrice: {
+            type: ['string', 'null']
+        },
+        currencyCode: {
+            type: ['string', 'null']
+        },
+        id: {
+            type: 'string'
+        },
+        openPnl: {
+            type: ['string', 'null']
+        },
+        price: {
+            type: ['string', 'null']
+        },
+        symbol: {
+            type: ['string', 'null']
+        },
+        symbolDescription: {
+            type: ['string', 'null']
+        },
+        units: {
+            type: ['string', 'null']
+        }
+    },
+    required: ['accountId', 'averagePurchasePrice', 'currencyCode', 'id', 'openPnl', 'price', 'symbol', 'symbolDescription', 'units']
 } as const;
 
 export const ActivityListSchema = {
