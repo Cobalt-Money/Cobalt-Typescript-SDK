@@ -4,9 +4,7 @@ export type ClientOptions = {
     baseUrl: 'https://api.cobaltpf.com/v1' | (string & {});
 };
 
-export type AccountList = {
-    data: Array<Account>;
-};
+export type AccountList = Array<Account>;
 
 export type Account = {
     creditLimit: number | null;
@@ -25,7 +23,14 @@ export type ErrorResponseWithCode = {
 };
 
 export type AccountCreateResponse = {
-    data: Account;
+    creditLimit: number | null;
+    currency: string | null;
+    current: number | null;
+    id: string;
+    institutionName: string | null;
+    mask: string | null;
+    name: string;
+    type: string;
 };
 
 export type ValidationError = {
@@ -40,13 +45,36 @@ export type ValidationError = {
     success: boolean;
 };
 
+export type AccountCreateRequest = {
+    /**
+     * Credit limit. Only valid when `type === "credit_card"`.
+     */
+    creditLimit?: number;
+    currency?: string;
+    /**
+     * Signed balance. Positive for assets, negative for liabilities (credit_card, loan). Magnitude stored internally.
+     */
+    currentBalance: number;
+    logoDomain?: string;
+    name: string;
+    subtype: 'checking' | 'savings' | 'cash' | 'credit card' | 'line of credit' | 'brokerage' | 'ira' | 'roth ira' | '401k' | 'hsa' | 'crypto' | 'mortgage' | 'student' | 'auto' | 'personal';
+    type: 'bank' | 'credit_card' | 'investment' | 'loan';
+};
+
 export type AccountDetail = {
-    data: Account;
+    creditLimit: number | null;
+    currency: string | null;
+    current: number | null;
+    id: string;
+    institutionName: string | null;
+    mask: string | null;
+    name: string;
+    type: string;
 };
 
 export type TransactionList = {
-    data: Array<Transaction>;
     hasMore: boolean;
+    items: Array<Transaction>;
     nextCursor: string | null;
 };
 
@@ -82,7 +110,34 @@ export type Transaction = {
 };
 
 export type TransactionDetail = {
-    data: Transaction;
+    /**
+     * Identifier of the account this transaction belongs to.
+     */
+    accountId: string;
+    /**
+     * Signed amount. Positive = money out (debit / spending), negative = money in (credit / refund).
+     */
+    amount: number;
+    /**
+     * Category name; null if uncategorized.
+     */
+    category: string | null;
+    /**
+     * Transaction date (YYYY-MM-DD).
+     */
+    date: string;
+    id: string;
+    merchant: string | null;
+    /**
+     * Raw description from the institution.
+     */
+    name: string;
+    /**
+     * Additional details regarding the transaction. Supports Markdown.
+     */
+    notes: string | null;
+    pending: boolean;
+    tagIds: Array<string>;
 };
 
 export type TransactionCreate = {
@@ -140,9 +195,7 @@ export type TransactionTagsUpdate = {
     tagIds: Array<string>;
 };
 
-export type TagList = {
-    data: Array<Tag>;
-};
+export type TagList = Array<Tag>;
 
 export type Tag = {
     archivedAt: string | null;
@@ -153,7 +206,11 @@ export type Tag = {
 };
 
 export type TagDetail = {
-    data: Tag;
+    archivedAt: string | null;
+    color: string | null;
+    createdAt: string;
+    id: string;
+    name: string;
 };
 
 export const TagColor = {
@@ -182,23 +239,19 @@ export type TagsBulkApplyResponse = {
     updatedCount: number;
 };
 
-export type PositionList = {
-    data: Array<{
-        accountId: string;
-        averagePurchasePrice: string | null;
-        currencyCode: string | null;
-        id: string;
-        openPnl: string | null;
-        price: string | null;
-        symbol: string | null;
-        symbolDescription: string | null;
-        units: string | null;
-    }>;
-};
+export type PositionList = Array<{
+    accountId: string;
+    averagePurchasePrice: string | null;
+    currencyCode: string | null;
+    id: string;
+    openPnl: string | null;
+    price: string | null;
+    symbol: string | null;
+    symbolDescription: string | null;
+    units: string | null;
+}>;
 
-export type ActivityList = {
-    data: Array<Activity>;
-};
+export type ActivityList = Array<Activity>;
 
 export type Activity = {
     accountId: string;
@@ -215,15 +268,13 @@ export type Activity = {
     symbol: string | null;
     tradeDate: string | null;
     /**
-     * Activity kind (BUY, SELL, DIVIDEND, FEE, etc.). Provider-defined.
+     * Activity kind (e.g. BUY, SELL, DIVIDEND, FEE, INTEREST, CONTRIBUTION, WITHDRAWAL). Provider-defined; open-ended.
      */
     type: string | null;
     units: number | null;
 };
 
-export type PortfolioSnapshotList = {
-    data: Array<PortfolioSnapshot>;
-};
+export type PortfolioSnapshotList = Array<PortfolioSnapshot>;
 
 export type PortfolioSnapshot = {
     accountId: string;
@@ -235,9 +286,7 @@ export type PortfolioSnapshot = {
     value: number;
 };
 
-export type BalanceSnapshotList = {
-    data: Array<BalanceSnapshot>;
-};
+export type BalanceSnapshotList = Array<BalanceSnapshot>;
 
 export type BalanceSnapshot = {
     accountId: string;
@@ -258,10 +307,8 @@ export type BalanceSnapshot = {
 };
 
 export type CategoryList = {
-    data: {
-        categories: Array<Category>;
-        groups: Array<CategoryGroup>;
-    };
+    categories: Array<Category>;
+    groups: Array<CategoryGroup>;
 };
 
 export type Category = {
@@ -290,12 +337,25 @@ export type CategoryGroup = {
 };
 
 export type CategoryDetailResponse = {
-    data: Category;
+    /**
+     * When true, transactions in this category are excluded from spending insights (e.g. transfers).
+     */
+    excludeFromInsights: boolean | null;
+    /**
+     * Parent category group id.
+     */
+    groupId: string | null;
+    hidden: boolean | null;
+    iconKey: string | null;
+    id: string;
+    name: string;
+    /**
+     * Stable identifier for seeded system categories (e.g. `groceries`). Null for user-created categories.
+     */
+    systemKey: string | null;
 };
 
-export type RecurringStreamList = {
-    data: Array<RecurringStream>;
-};
+export type RecurringStreamList = Array<RecurringStream>;
 
 export type RecurringStream = {
     accountId: string;
@@ -305,10 +365,7 @@ export type RecurringStream = {
     } | null);
     description: string | null;
     firstDate: string | null;
-    /**
-     * Detected frequency (e.g. WEEKLY, MONTHLY, ANNUALLY).
-     */
-    frequency: string;
+    frequency: RecurringStreamFrequency;
     id: string;
     isActive: boolean;
     lastAmount: number;
@@ -318,21 +375,58 @@ export type RecurringStream = {
      * Best-effort guess at the next charge date.
      */
     predictedNextDate: string | null;
-    /**
-     * MATURE, EARLY_DETECTION, etc.
-     */
-    status: string | null;
-    /**
-     * INFLOW or OUTFLOW.
-     */
-    streamType: string | null;
+    status: RecurringStreamStatus;
+    streamType: RecurringStreamType;
 };
+
+/**
+ * Detected cadence.
+ */
+export const RecurringStreamFrequency = {
+    UNKNOWN: 'UNKNOWN',
+    WEEKLY: 'WEEKLY',
+    BIWEEKLY: 'BIWEEKLY',
+    SEMI_MONTHLY: 'SEMI_MONTHLY',
+    MONTHLY: 'MONTHLY',
+    ANNUALLY: 'ANNUALLY'
+} as const;
+
+/**
+ * Detected cadence.
+ */
+export type RecurringStreamFrequency = typeof RecurringStreamFrequency[keyof typeof RecurringStreamFrequency];
+
+/**
+ * Detection state of the stream.
+ */
+export const RecurringStreamStatus = {
+    UNKNOWN: 'UNKNOWN',
+    MATURE: 'MATURE',
+    EARLY_DETECTION: 'EARLY_DETECTION',
+    TOMBSTONED: 'TOMBSTONED',
+    NULL: null
+} as const;
+
+/**
+ * Detection state of the stream.
+ */
+export type RecurringStreamStatus = typeof RecurringStreamStatus[keyof typeof RecurringStreamStatus];
+
+/**
+ * Direction of cash flow.
+ */
+export const RecurringStreamType = {
+    INFLOW: 'inflow',
+    OUTFLOW: 'outflow',
+    NULL: null
+} as const;
+
+/**
+ * Direction of cash flow.
+ */
+export type RecurringStreamType = typeof RecurringStreamType[keyof typeof RecurringStreamType];
 
 export type SpendingResponse = {
-    data: SpendingItem;
-};
-
-export type SpendingItem = {
     averageLabel: 'daily' | 'weekly' | 'monthly' | 'yearly';
     averageSpending: number;
     buckets: Array<SpendingBucket>;
@@ -379,15 +473,7 @@ export type AccountsCreateData = {
     /**
      * Account to create
      */
-    body: {
-        creditLimit?: number;
-        currency?: string;
-        currentBalance: number;
-        logoDomain?: string;
-        name: string;
-        subtype: 'credit card' | 'line of credit' | 'checking' | 'savings' | 'cash' | 'brokerage' | 'ira' | 'roth ira' | '401k' | 'hsa' | 'crypto' | 'mortgage' | 'student' | 'auto' | 'personal';
-        type: 'depository' | 'credit' | 'investment' | 'loan';
-    };
+    body: AccountCreateRequest;
     path?: never;
     query?: never;
     url: '/accounts';
