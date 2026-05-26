@@ -7,15 +7,43 @@ export type ClientOptions = {
 export type AccountList = Array<Account>;
 
 export type Account = {
+    /**
+     * Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one.
+     */
+    balance: number | null;
+    /**
+     * Credit limit for credit-card accounts. Null for non-credit accounts.
+     */
     creditLimit: number | null;
     currency: string | null;
-    current: number | null;
+    /**
+     * Stable account identifier.
+     */
     id: string;
-    institutionName: string | null;
+    /**
+     * Name of the institution holding the account.
+     */
+    institution: string | null;
+    /**
+     * Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.
+     */
     mask: string | null;
+    /**
+     * Account display name.
+     */
     name: string;
-    type: string;
+    type: AccountType;
 };
+
+export const AccountType = {
+    BANK: 'bank',
+    CREDIT_CARD: 'credit_card',
+    INVESTMENT: 'investment',
+    LOAN: 'loan',
+    OTHER: 'other'
+} as const;
+
+export type AccountType = typeof AccountType[keyof typeof AccountType];
 
 export type ErrorResponseWithCode = {
     code: string;
@@ -23,14 +51,32 @@ export type ErrorResponseWithCode = {
 };
 
 export type AccountCreateResponse = {
+    /**
+     * Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one.
+     */
+    balance: number | null;
+    /**
+     * Credit limit for credit-card accounts. Null for non-credit accounts.
+     */
     creditLimit: number | null;
     currency: string | null;
-    current: number | null;
+    /**
+     * Stable account identifier.
+     */
     id: string;
-    institutionName: string | null;
+    /**
+     * Name of the institution holding the account.
+     */
+    institution: string | null;
+    /**
+     * Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.
+     */
     mask: string | null;
+    /**
+     * Account display name.
+     */
     name: string;
-    type: string;
+    type: AccountType;
 };
 
 export type ValidationError = {
@@ -62,14 +108,32 @@ export type AccountCreateRequest = {
 };
 
 export type AccountDetail = {
+    /**
+     * Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one.
+     */
+    balance: number | null;
+    /**
+     * Credit limit for credit-card accounts. Null for non-credit accounts.
+     */
     creditLimit: number | null;
     currency: string | null;
-    current: number | null;
+    /**
+     * Stable account identifier.
+     */
     id: string;
-    institutionName: string | null;
+    /**
+     * Name of the institution holding the account.
+     */
+    institution: string | null;
+    /**
+     * Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.
+     */
     mask: string | null;
+    /**
+     * Account display name.
+     */
     name: string;
-    type: string;
+    type: AccountType;
 };
 
 export type TransactionList = {
@@ -242,15 +306,40 @@ export type TagsBulkApplyResponse = {
 export type PositionList = Array<Position>;
 
 export type Position = {
+    /**
+     * Account this position belongs to.
+     */
     accountId: string;
-    averagePurchasePrice: string | null;
-    currencyCode: string | null;
+    /**
+     * Cost basis per share.
+     */
+    averagePrice: number | null;
+    currency: string | null;
+    /**
+     * Security long name.
+     */
+    description: string | null;
     id: string;
-    openPnl: string | null;
-    price: string | null;
+    /**
+     * units × price.
+     */
+    marketValue: number | null;
+    /**
+     * Unrealized profit/loss.
+     */
+    openPnl: number | null;
+    /**
+     * Latest reported price per share.
+     */
+    price: number | null;
+    /**
+     * Ticker symbol (e.g. AAPL).
+     */
     symbol: string | null;
-    symbolDescription: string | null;
-    units: string | null;
+    /**
+     * Quantity held.
+     */
+    units: number | null;
 };
 
 export type ActivityList = Array<Activity>;

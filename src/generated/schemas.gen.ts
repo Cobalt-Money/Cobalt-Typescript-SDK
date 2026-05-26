@@ -10,32 +10,44 @@ export const AccountListSchema = {
 export const AccountSchema = {
     type: 'object',
     properties: {
+        balance: {
+            type: ['number', 'null'],
+            description: "Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one."
+        },
         creditLimit: {
-            type: ['number', 'null']
+            type: ['number', 'null'],
+            description: 'Credit limit for credit-card accounts. Null for non-credit accounts.'
         },
         currency: {
-            type: ['string', 'null']
-        },
-        current: {
-            type: ['number', 'null']
+            type: ['string', 'null'],
+            example: 'USD'
         },
         id: {
-            type: 'string'
+            type: 'string',
+            description: 'Stable account identifier.'
         },
-        institutionName: {
-            type: ['string', 'null']
+        institution: {
+            type: ['string', 'null'],
+            description: 'Name of the institution holding the account.'
         },
         mask: {
-            type: ['string', 'null']
+            type: ['string', 'null'],
+            description: 'Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.'
         },
         name: {
-            type: 'string'
+            type: 'string',
+            description: 'Account display name.'
         },
         type: {
-            type: 'string'
+            '$ref': '#/components/schemas/AccountType'
         }
     },
-    required: ['creditLimit', 'currency', 'current', 'id', 'institutionName', 'mask', 'name', 'type']
+    required: ['balance', 'creditLimit', 'currency', 'id', 'institution', 'mask', 'name', 'type']
+} as const;
+
+export const AccountTypeSchema = {
+    type: 'string',
+    enum: ['bank', 'credit_card', 'investment', 'loan', 'other']
 } as const;
 
 export const ErrorResponseWithCodeSchema = {
@@ -54,32 +66,39 @@ export const ErrorResponseWithCodeSchema = {
 export const AccountCreateResponseSchema = {
     type: 'object',
     properties: {
+        balance: {
+            type: ['number', 'null'],
+            description: "Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one."
+        },
         creditLimit: {
-            type: ['number', 'null']
+            type: ['number', 'null'],
+            description: 'Credit limit for credit-card accounts. Null for non-credit accounts.'
         },
         currency: {
-            type: ['string', 'null']
-        },
-        current: {
-            type: ['number', 'null']
+            type: ['string', 'null'],
+            example: 'USD'
         },
         id: {
-            type: 'string'
+            type: 'string',
+            description: 'Stable account identifier.'
         },
-        institutionName: {
-            type: ['string', 'null']
+        institution: {
+            type: ['string', 'null'],
+            description: 'Name of the institution holding the account.'
         },
         mask: {
-            type: ['string', 'null']
+            type: ['string', 'null'],
+            description: 'Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.'
         },
         name: {
-            type: 'string'
+            type: 'string',
+            description: 'Account display name.'
         },
         type: {
-            type: 'string'
+            '$ref': '#/components/schemas/AccountType'
         }
     },
-    required: ['creditLimit', 'currency', 'current', 'id', 'institutionName', 'mask', 'name', 'type']
+    required: ['balance', 'creditLimit', 'currency', 'id', 'institution', 'mask', 'name', 'type']
 } as const;
 
 export const ValidationErrorSchema = {
@@ -171,32 +190,39 @@ export const AccountCreateRequestSchema = {
 export const AccountDetailSchema = {
     type: 'object',
     properties: {
+        balance: {
+            type: ['number', 'null'],
+            description: "Signed balance in the account's currency. Positive for assets (bank, investment), negative for liabilities (credit_card, loan). Net worth = sum of balances. Null when the provider has not reported one."
+        },
         creditLimit: {
-            type: ['number', 'null']
+            type: ['number', 'null'],
+            description: 'Credit limit for credit-card accounts. Null for non-credit accounts.'
         },
         currency: {
-            type: ['string', 'null']
-        },
-        current: {
-            type: ['number', 'null']
+            type: ['string', 'null'],
+            example: 'USD'
         },
         id: {
-            type: 'string'
+            type: 'string',
+            description: 'Stable account identifier.'
         },
-        institutionName: {
-            type: ['string', 'null']
+        institution: {
+            type: ['string', 'null'],
+            description: 'Name of the institution holding the account.'
         },
         mask: {
-            type: ['string', 'null']
+            type: ['string', 'null'],
+            description: 'Last 4 digits of the account number when reported by the provider. Best-effort — some institutions (e.g. Venmo, Fidelity) return null even when the underlying account has a number. Do not rely on `mask` for account identity; use `id`.'
         },
         name: {
-            type: 'string'
+            type: 'string',
+            description: 'Account display name.'
         },
         type: {
-            type: 'string'
+            '$ref': '#/components/schemas/AccountType'
         }
     },
-    required: ['creditLimit', 'currency', 'current', 'id', 'institutionName', 'mask', 'name', 'type']
+    required: ['balance', 'creditLimit', 'currency', 'id', 'institution', 'mask', 'name', 'type']
 } as const;
 
 export const TransactionListSchema = {
@@ -505,34 +531,45 @@ export const PositionSchema = {
     type: 'object',
     properties: {
         accountId: {
-            type: 'string'
+            type: 'string',
+            description: 'Account this position belongs to.'
         },
-        averagePurchasePrice: {
+        averagePrice: {
+            type: ['number', 'null'],
+            description: 'Cost basis per share.'
+        },
+        currency: {
             type: ['string', 'null']
         },
-        currencyCode: {
-            type: ['string', 'null']
+        description: {
+            type: ['string', 'null'],
+            description: 'Security long name.'
         },
         id: {
             type: 'string'
         },
+        marketValue: {
+            type: ['number', 'null'],
+            description: 'units × price.'
+        },
         openPnl: {
-            type: ['string', 'null']
+            type: ['number', 'null'],
+            description: 'Unrealized profit/loss.'
         },
         price: {
-            type: ['string', 'null']
+            type: ['number', 'null'],
+            description: 'Latest reported price per share.'
         },
         symbol: {
-            type: ['string', 'null']
-        },
-        symbolDescription: {
-            type: ['string', 'null']
+            type: ['string', 'null'],
+            description: 'Ticker symbol (e.g. AAPL).'
         },
         units: {
-            type: ['string', 'null']
+            type: ['number', 'null'],
+            description: 'Quantity held.'
         }
     },
-    required: ['accountId', 'averagePurchasePrice', 'currencyCode', 'id', 'openPnl', 'price', 'symbol', 'symbolDescription', 'units']
+    required: ['accountId', 'averagePrice', 'currency', 'description', 'id', 'marketValue', 'openPnl', 'price', 'symbol', 'units']
 } as const;
 
 export const ActivityListSchema = {
