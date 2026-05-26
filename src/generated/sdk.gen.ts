@@ -40,7 +40,7 @@ export class accounts {
     /**
      * Create manual account
      *
-     * Create a manual (non-bank-linked) account — checking, savings, credit, brokerage, or loan — and seed today's balance snapshot. `subtype` must belong to the chosen `type` vocabulary (see schema). `creditLimit` only valid when `type === "credit"`.
+     * Create a manual (non-bank-linked) account — bank, credit_card, investment, or loan — and seed today's balance snapshot. `subtype` must belong to the chosen `type` vocabulary (see schema). `creditLimit` only valid when `type === "credit_card"`. `currentBalance` is signed: positive for assets, negative for liabilities.
      */
     public static create<ThrowOnError extends boolean = false>(options: Options<AccountsCreateData, ThrowOnError>) {
         return (options.client ?? client).post<AccountsCreateResponses, AccountsCreateErrors, ThrowOnError>({
@@ -100,7 +100,7 @@ export class transactions {
     /**
      * List transactions
      *
-     * Returns transactions across all of the user's accounts, newest first. Use `nextCursor` to page.
+     * Returns transactions across all of the user's accounts, newest first. Use `nextCursor` to page. **Note:** `amount` is signed — positive = money out (debit/spending), negative = money in (credit/refund). This inverts the Plaid/Mint convention.
      */
     public static list<ThrowOnError extends boolean = false>(options?: Options<TransactionsListData, ThrowOnError>) {
         return (options?.client ?? client).get<TransactionsListResponses, TransactionsListErrors, ThrowOnError>({
@@ -118,7 +118,7 @@ export class transactions {
     /**
      * Create transaction
      *
-     * Add a manual transaction. The target `accountId` must reference a manual (not bank-synced) account.
+     * Add a manual transaction. The target `accountId` must reference a manual (not bank-synced) account. **Note:** `amount` is signed — positive = money out (debit/spending), negative = money in (credit/refund).
      */
     public static create<ThrowOnError extends boolean = false>(options: Options<TransactionsCreateData, ThrowOnError>) {
         return (options.client ?? client).post<TransactionsCreateResponses, TransactionsCreateErrors, ThrowOnError>({
