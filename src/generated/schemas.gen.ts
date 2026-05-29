@@ -253,7 +253,7 @@ export const TransactionSchema = {
         },
         amount: {
             type: 'number',
-            description: 'Signed amount. Positive = money out (debit / spending), negative = money in (credit / refund).'
+            description: 'Signed amount. Positive = money in (credit / refund / income), negative = money out (debit / spending).'
         },
         category: {
             type: ['string', 'null'],
@@ -300,7 +300,7 @@ export const TransactionDetailSchema = {
         },
         amount: {
             type: 'number',
-            description: 'Signed amount. Positive = money out (debit / spending), negative = money in (credit / refund).'
+            description: 'Signed amount. Positive = money in (credit / refund / income), negative = money out (debit / spending).'
         },
         category: {
             type: ['string', 'null'],
@@ -348,8 +348,8 @@ export const TransactionCreateSchema = {
         },
         amount: {
             type: 'number',
-            description: 'Positive = money out (spending), negative = money in (refund/income).',
-            example: 24.5
+            description: 'Positive = money in (refund/income), negative = money out (spending).',
+            example: -24.5
         },
         categoryId: {
             type: 'string',
@@ -675,7 +675,7 @@ export const BalanceSnapshotSchema = {
         },
         currentBalance: {
             type: 'number',
-            description: 'Posted balance at end-of-day.'
+            description: 'Posted balance at end-of-day. Signed: positive for assets, negative for liabilities.'
         },
         date: {
             type: 'string',
