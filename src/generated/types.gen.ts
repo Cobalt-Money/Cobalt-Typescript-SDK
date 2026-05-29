@@ -148,7 +148,7 @@ export type Transaction = {
      */
     accountId: string;
     /**
-     * Signed amount. Positive = money out (debit / spending), negative = money in (credit / refund).
+     * Signed amount. Positive = money in (credit / refund / income), negative = money out (debit / spending).
      */
     amount: number;
     /**
@@ -179,7 +179,7 @@ export type TransactionDetail = {
      */
     accountId: string;
     /**
-     * Signed amount. Positive = money out (debit / spending), negative = money in (credit / refund).
+     * Signed amount. Positive = money in (credit / refund / income), negative = money out (debit / spending).
      */
     amount: number;
     /**
@@ -210,7 +210,7 @@ export type TransactionCreate = {
      */
     accountId: string;
     /**
-     * Positive = money out (spending), negative = money in (refund/income).
+     * Positive = money in (refund/income), negative = money out (spending).
      */
     amount: number;
     /**
@@ -390,7 +390,7 @@ export type BalanceSnapshot = {
      */
     creditLimit: number | null;
     /**
-     * Posted balance at end-of-day.
+     * Posted balance at end-of-day. Signed: positive for assets, negative for liabilities.
      */
     currentBalance: number;
     date: string;
@@ -674,6 +674,10 @@ export type TransactionsListData = {
          * Restrict to one or more account ids. Repeat the param (`?accountId=a&accountId=b`) for multiple.
          */
         accountId?: string | Array<string>;
+        /**
+         * Restrict to one or more category group systemKeys. Repeat the param (`?categoryGroup=food_and_drink&categoryGroup=travel`) for multiple.
+         */
+        categoryGroup?: string | Array<string>;
         /**
          * Opaque cursor returned by the previous page. Omit for first page.
          */
