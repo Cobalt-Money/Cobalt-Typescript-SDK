@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AccountsCreateData, AccountsCreateErrors, AccountsCreateResponses, AccountsDeleteData, AccountsDeleteErrors, AccountsDeleteResponses, AccountsGetData, AccountsGetErrors, AccountsGetResponses, AccountsListData, AccountsListErrors, AccountsListResponses, ActivitiesListData, ActivitiesListErrors, ActivitiesListResponses, BalancesSnapshotsData, BalancesSnapshotsErrors, BalancesSnapshotsResponses, CategoriesCreateData, CategoriesCreateErrors, CategoriesCreateResponses, CategoriesDeleteData, CategoriesDeleteErrors, CategoriesDeleteResponses, CategoriesListData, CategoriesListErrors, CategoriesListResponses, CategoriesUpdateData, CategoriesUpdateErrors, CategoriesUpdateResponses, PortfolioSnapshotsData, PortfolioSnapshotsErrors, PortfolioSnapshotsResponses, PositionsListData, PositionsListErrors, PositionsListResponses, RecurringListData, RecurringListErrors, RecurringListResponses, SpendingGetData, SpendingGetErrors, SpendingGetResponses, TagsBulkApplyData, TagsBulkApplyErrors, TagsBulkApplyResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsGetData, TagsGetErrors, TagsGetResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses, TransactionsCreateData, TransactionsCreateErrors, TransactionsCreateResponses, TransactionsGetData, TransactionsGetErrors, TransactionsGetResponses, TransactionsListData, TransactionsListErrors, TransactionsListResponses, TransactionsUpdateData, TransactionsUpdateErrors, TransactionsUpdateResponses, TransactionsUpdateTagsData, TransactionsUpdateTagsErrors, TransactionsUpdateTagsResponses } from './types.gen';
+import type { AccountsBrokerageListData, AccountsBrokerageListErrors, AccountsBrokerageListResponses, AccountsCreateData, AccountsCreateErrors, AccountsCreateResponses, AccountsDeleteData, AccountsDeleteErrors, AccountsDeleteResponses, AccountsGetData, AccountsGetErrors, AccountsGetResponses, AccountsListData, AccountsListErrors, AccountsListResponses, ActivitiesListData, ActivitiesListErrors, ActivitiesListResponses, BalancesSnapshotsData, BalancesSnapshotsErrors, BalancesSnapshotsResponses, CategoriesCreateData, CategoriesCreateErrors, CategoriesCreateResponses, CategoriesDeleteData, CategoriesDeleteErrors, CategoriesDeleteResponses, CategoriesListData, CategoriesListErrors, CategoriesListResponses, CategoriesUpdateData, CategoriesUpdateErrors, CategoriesUpdateResponses, PortfolioSnapshotsData, PortfolioSnapshotsErrors, PortfolioSnapshotsResponses, PositionsListData, PositionsListErrors, PositionsListResponses, RecurringListData, RecurringListErrors, RecurringListResponses, SpendingGetData, SpendingGetErrors, SpendingGetResponses, TagsBulkApplyData, TagsBulkApplyErrors, TagsBulkApplyResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsGetData, TagsGetErrors, TagsGetResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses, TransactionsCreateData, TransactionsCreateErrors, TransactionsCreateResponses, TransactionsDeleteData, TransactionsDeleteErrors, TransactionsDeleteResponses, TransactionsGetData, TransactionsGetErrors, TransactionsGetResponses, TransactionsListData, TransactionsListErrors, TransactionsListResponses, TransactionsUpdateData, TransactionsUpdateErrors, TransactionsUpdateResponses, TransactionsUpdateTagsData, TransactionsUpdateTagsErrors, TransactionsUpdateTagsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -60,9 +60,27 @@ export class accounts {
     }
     
     /**
+     * List brokerage accounts
+     *
+     * All brokerage-shaped accounts (SnapTrade, Plaid investment, manual investment). Inspect `source` on each item to distinguish. SnapTrade-only fields (`snaptradeAuthorizationId`, `needsReauth`) are null/false for non-SnapTrade rows.
+     */
+    public static brokerage_list<ThrowOnError extends boolean = false>(options?: Options<AccountsBrokerageListData, ThrowOnError>) {
+        return (options?.client ?? client).get<AccountsBrokerageListResponses, AccountsBrokerageListErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/accounts/brokerage',
+            ...options
+        });
+    }
+    
+    /**
      * Delete account
      *
-     * Delete an account. Manual accounts are removed outright; Plaid-linked accounts are unlinked and — when no accounts remain under the underlying item — Cobalt also calls Plaid's `/item/remove` to stop billing and webhooks.
+     * Delete an account by id. Source-agnostic: manual accounts are removed outright, Plaid-linked accounts are unlinked (and Plaid's `/item/remove` is called once the item drains), and SnapTrade brokerage accounts are disconnected upstream.
      */
     public static delete<ThrowOnError extends boolean = false>(options: Options<AccountsDeleteData, ThrowOnError>) {
         return (options.client ?? client).delete<AccountsDeleteResponses, AccountsDeleteErrors, ThrowOnError>({
@@ -134,6 +152,24 @@ export class transactions {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+    
+    /**
+     * Delete transaction
+     *
+     * Delete a manual transaction. Idempotent — returns success even if the transaction is already gone or is provider-managed (Plaid/SnapTrade).
+     */
+    public static delete<ThrowOnError extends boolean = false>(options: Options<TransactionsDeleteData, ThrowOnError>) {
+        return (options.client ?? client).delete<TransactionsDeleteResponses, TransactionsDeleteErrors, ThrowOnError>({
+            security: [
+                {
+                    scheme: 'bearer',
+                    type: 'http'
+                }
+            ],
+            url: '/transactions/{transactionId}',
+            ...options
         });
     }
     
