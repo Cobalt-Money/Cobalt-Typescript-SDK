@@ -592,6 +592,67 @@ export type AccountsCreateResponses = {
 
 export type AccountsCreateResponse = AccountsCreateResponses[keyof AccountsCreateResponses];
 
+export type AccountsBrokerageListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter by account origin. Default `all`.
+         */
+        source?: 'snaptrade' | 'plaid' | 'manual' | 'all';
+    };
+    url: '/accounts/brokerage';
+};
+
+export type AccountsBrokerageListErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+};
+
+export type AccountsBrokerageListError = AccountsBrokerageListErrors[keyof AccountsBrokerageListErrors];
+
+export type AccountsBrokerageListResponses = {
+    /**
+     * Brokerage accounts
+     */
+    200: {
+        accounts: Array<{
+            accountDetails: {
+                balance: string | null;
+                id: string;
+                lastSync: string | null;
+            } | null;
+            accountStatus: string | null;
+            accountType: string | null;
+            balances: Array<{
+                buyingPower: string | null;
+                cash: string | null;
+                currencyCode: string | null;
+                currencyName: string | null;
+                id: string;
+                lastSync: string | null;
+            }>;
+            id: string;
+            institutionName: string | null;
+            name: string | null;
+            /**
+             * True when the SnapTrade authorization backing this account is disabled and requires user reconnect via `generateConnectionPortal` with `reconnectAuthorizationId`. Always false for non-SnapTrade accounts.
+             */
+            needsReauth: boolean;
+            /**
+             * SnapTrade authorization id for reconnect flows. Null for Plaid / manual accounts. Pass as `reconnectAuthorizationId` to `generateConnectionPortal` when `needsReauth` is true.
+             */
+            snaptradeAuthorizationId: string | null;
+            plaidAccountId?: string;
+            source?: 'plaid' | 'snaptrade' | 'manual';
+        }>;
+    };
+};
+
+export type AccountsBrokerageListResponse = AccountsBrokerageListResponses[keyof AccountsBrokerageListResponses];
+
 export type AccountsDeleteData = {
     body?: never;
     path: {
@@ -746,6 +807,35 @@ export type TransactionsCreateResponses = {
 };
 
 export type TransactionsCreateResponse = TransactionsCreateResponses[keyof TransactionsCreateResponses];
+
+export type TransactionsDeleteData = {
+    body?: never;
+    path: {
+        transactionId: string;
+    };
+    query?: never;
+    url: '/transactions/{transactionId}';
+};
+
+export type TransactionsDeleteErrors = {
+    /**
+     * Missing or invalid API key
+     */
+    401: ErrorResponseWithCode;
+};
+
+export type TransactionsDeleteError = TransactionsDeleteErrors[keyof TransactionsDeleteErrors];
+
+export type TransactionsDeleteResponses = {
+    /**
+     * Transaction deleted
+     */
+    200: {
+        success: boolean;
+    };
+};
+
+export type TransactionsDeleteResponse = TransactionsDeleteResponses[keyof TransactionsDeleteResponses];
 
 export type TransactionsGetData = {
     body?: never;
