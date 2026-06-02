@@ -350,6 +350,9 @@ export const TransactionSchema = {
         id: {
             type: 'string'
         },
+        location: {
+            '$ref': '#/components/schemas/TransactionLocation'
+        },
         merchant: {
             type: ['string', 'null']
         },
@@ -372,7 +375,39 @@ export const TransactionSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'merchant', 'name', 'notes', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'pending', 'tagIds']
+} as const;
+
+export const TransactionLocationSchema = {
+    type: ['object', 'null'],
+    properties: {
+        address: {
+            type: ['string', 'null']
+        },
+        city: {
+            type: ['string', 'null']
+        },
+        country: {
+            type: ['string', 'null']
+        },
+        lat: {
+            type: ['number', 'null']
+        },
+        lon: {
+            type: ['number', 'null']
+        },
+        postal_code: {
+            type: ['string', 'null']
+        },
+        region: {
+            type: ['string', 'null']
+        },
+        store_number: {
+            type: ['string', 'null']
+        }
+    },
+    required: ['address', 'city', 'country', 'lat', 'lon', 'postal_code', 'region', 'store_number'],
+    description: 'Merchant location when reported by the institution. Null when no location fields are available.'
 } as const;
 
 export const TransactionDetailSchema = {
@@ -397,6 +432,9 @@ export const TransactionDetailSchema = {
         id: {
             type: 'string'
         },
+        location: {
+            '$ref': '#/components/schemas/TransactionLocation'
+        },
         merchant: {
             type: ['string', 'null']
         },
@@ -419,7 +457,7 @@ export const TransactionDetailSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'merchant', 'name', 'notes', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'pending', 'tagIds']
 } as const;
 
 export const TransactionCreateSchema = {
@@ -447,7 +485,14 @@ export const TransactionCreateSchema = {
             example: '2026-05-22'
         },
         location: {
-            '$ref': '#/components/schemas/TransactionLocation'
+            allOf: [
+                {
+                    '$ref': '#/components/schemas/TransactionLocation'
+                },
+                {
+                    description: "Merchant location. When set, `location` is added to lockedFields so future syncs can't overwrite it."
+                }
+            ]
         },
         merchantName: {
             type: 'string',
@@ -487,38 +532,6 @@ export const TransactionCreateSchema = {
         }
     },
     required: ['accountId', 'amount', 'date', 'name']
-} as const;
-
-export const TransactionLocationSchema = {
-    type: 'object',
-    properties: {
-        address: {
-            type: ['string', 'null']
-        },
-        city: {
-            type: ['string', 'null']
-        },
-        country: {
-            type: ['string', 'null']
-        },
-        lat: {
-            type: ['number', 'null']
-        },
-        lon: {
-            type: ['number', 'null']
-        },
-        postal_code: {
-            type: ['string', 'null']
-        },
-        region: {
-            type: ['string', 'null']
-        },
-        store_number: {
-            type: ['string', 'null']
-        }
-    },
-    required: ['address', 'city', 'country', 'lat', 'lon', 'postal_code', 'region', 'store_number'],
-    description: "Merchant location. When set, `location` is added to lockedFields so future syncs can't overwrite it."
 } as const;
 
 export const TransactionTagsUpdateSchema = {
