@@ -205,6 +205,7 @@ export type Transaction = {
      */
     date: string;
     id: string;
+    location: TransactionLocation;
     merchant: string | null;
     /**
      * Raw description from the institution.
@@ -217,6 +218,20 @@ export type Transaction = {
     pending: boolean;
     tagIds: Array<string>;
 };
+
+/**
+ * Merchant location when reported by the institution. Null when no location fields are available.
+ */
+export type TransactionLocation = {
+    address: string | null;
+    city: string | null;
+    country: string | null;
+    lat: number | null;
+    lon: number | null;
+    postal_code: string | null;
+    region: string | null;
+    store_number: string | null;
+} | null;
 
 export type TransactionDetail = {
     /**
@@ -236,6 +251,7 @@ export type TransactionDetail = {
      */
     date: string;
     id: string;
+    location: TransactionLocation;
     merchant: string | null;
     /**
      * Raw description from the institution.
@@ -263,7 +279,7 @@ export type TransactionCreate = {
      */
     categoryId?: string;
     date: string;
-    location?: TransactionLocation;
+    location?: TransactionLocation & unknown;
     merchantName?: string;
     /**
      * Transaction description.
@@ -281,20 +297,6 @@ export type TransactionCreate = {
      * Merchant website. Bare domain or full URL.
      */
     website?: string;
-};
-
-/**
- * Merchant location. When set, `location` is added to lockedFields so future syncs can't overwrite it.
- */
-export type TransactionLocation = {
-    address: string | null;
-    city: string | null;
-    country: string | null;
-    lat: number | null;
-    lon: number | null;
-    postal_code: string | null;
-    region: string | null;
-    store_number: string | null;
 };
 
 export type TransactionTagsUpdate = {
@@ -895,9 +897,7 @@ export type TransactionsUpdateData = {
     body: {
         categoryId?: string | null;
         date?: string | null;
-        location?: TransactionLocation & ({
-            [key: string]: unknown;
-        } | null);
+        location?: TransactionLocation;
         merchantName?: string | null;
         name?: string | null;
         notes?: string | null;
