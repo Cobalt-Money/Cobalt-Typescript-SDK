@@ -365,6 +365,11 @@ export const TransactionSchema = {
             description: 'Additional details regarding the transaction. Supports Markdown.',
             example: '**Reimbursable** — paid for team lunch, expense via Expensify'
         },
+        paymentChannel: {
+            type: ['string', 'null'],
+            enum: ['in store', 'online', 'other', null],
+            description: 'Where the transaction happened: `in store`, `online`, or `other`. Null when unknown.'
+        },
         pending: {
             type: 'boolean'
         },
@@ -375,7 +380,7 @@ export const TransactionSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'tagIds']
 } as const;
 
 export const TransactionLocationSchema = {
@@ -447,6 +452,11 @@ export const TransactionDetailSchema = {
             description: 'Additional details regarding the transaction. Supports Markdown.',
             example: '**Reimbursable** — paid for team lunch, expense via Expensify'
         },
+        paymentChannel: {
+            type: ['string', 'null'],
+            enum: ['in store', 'online', 'other', null],
+            description: 'Where the transaction happened: `in store`, `online`, or `other`. Null when unknown.'
+        },
         pending: {
             type: 'boolean'
         },
@@ -457,7 +467,7 @@ export const TransactionDetailSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'tagIds']
 } as const;
 
 export const TransactionCreateSchema = {

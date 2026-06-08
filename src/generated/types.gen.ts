@@ -215,6 +215,10 @@ export type Transaction = {
      * Additional details regarding the transaction. Supports Markdown.
      */
     notes: string | null;
+    /**
+     * Where the transaction happened: `in store`, `online`, or `other`. Null when unknown.
+     */
+    paymentChannel: 'in store' | 'online' | 'other' | null;
     pending: boolean;
     tagIds: Array<string>;
 };
@@ -261,6 +265,10 @@ export type TransactionDetail = {
      * Additional details regarding the transaction. Supports Markdown.
      */
     notes: string | null;
+    /**
+     * Where the transaction happened: `in store`, `online`, or `other`. Null when unknown.
+     */
+    paymentChannel: 'in store' | 'online' | 'other' | null;
     pending: boolean;
     tagIds: Array<string>;
 };
@@ -901,6 +909,7 @@ export type TransactionsUpdateData = {
         merchantName?: string | null;
         name?: string | null;
         notes?: string | null;
+        paymentChannel?: 'in store' | 'online' | 'other' | null;
         tags?: Array<string>;
         website?: string | null;
     };
