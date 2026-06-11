@@ -373,6 +373,10 @@ export const TransactionSchema = {
         pending: {
             type: 'boolean'
         },
+        sharedWithFriends: {
+            type: 'boolean',
+            description: "True when this transaction has been auto-shared into the user's friends feed (in-store + has coordinates)."
+        },
         tagIds: {
             type: 'array',
             items: {
@@ -380,7 +384,7 @@ export const TransactionSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'sharedWithFriends', 'tagIds']
 } as const;
 
 export const TransactionLocationSchema = {
@@ -460,6 +464,10 @@ export const TransactionDetailSchema = {
         pending: {
             type: 'boolean'
         },
+        sharedWithFriends: {
+            type: 'boolean',
+            description: "True when this transaction has been auto-shared into the user's friends feed (in-store + has coordinates)."
+        },
         tagIds: {
             type: 'array',
             items: {
@@ -467,7 +475,7 @@ export const TransactionDetailSchema = {
             }
         }
     },
-    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'tagIds']
+    required: ['accountId', 'amount', 'category', 'date', 'id', 'location', 'merchant', 'name', 'notes', 'paymentChannel', 'pending', 'sharedWithFriends', 'tagIds']
 } as const;
 
 export const TransactionCreateSchema = {
