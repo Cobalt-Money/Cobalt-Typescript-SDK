@@ -220,6 +220,10 @@ export type Transaction = {
      */
     paymentChannel: 'in store' | 'online' | 'other' | null;
     pending: boolean;
+    /**
+     * True when this transaction has been auto-shared into the user's friends feed (in-store + has coordinates).
+     */
+    sharedWithFriends: boolean;
     tagIds: Array<string>;
 };
 
@@ -270,6 +274,10 @@ export type TransactionDetail = {
      */
     paymentChannel: 'in store' | 'online' | 'other' | null;
     pending: boolean;
+    /**
+     * True when this transaction has been auto-shared into the user's friends feed (in-store + has coordinates).
+     */
+    sharedWithFriends: boolean;
     tagIds: Array<string>;
 };
 
